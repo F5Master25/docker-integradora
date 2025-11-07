@@ -103,22 +103,22 @@ Antes de poder correr la aplicación, necesitamos obtener el código fuente y de
 
 - **1.1)** Ejecute el comando correspondiente para buildear la imagen. Elija un nombre de imagen y un tag acorde. 
     ```bash
-    # Desde la raiz del proyecto
-    docker build -t list-manager:v1 ./app
+        # Desde la raiz del proyecto
+        docker build -t list-manager:v1 ./app
     ```
 - **1.2)** ¿Qué espacio ocupa la imagen una vez creada?
     ```bash
-    # Comando para saber espacio
-    docker images
-    # Espacio ocupado: 177M
+        # Comando para saber espacio
+        docker images
+        # Espacio ocupado: 177M
     ```
 - **1.3)** ¿Puede hacer algo para optimizar o mejorar la imagen?. Describa qué modificaciones puede hacer para optimizar la imagen.
     ```bash
-    #   Puntos a mejorar:
-    #   1. Imagen utilizada: en vez de utilizar como imagen base alpine y luego instalar node, mejor seria utilizar la (imagen oficial de node)[https://hub.docker.com/_/node]
-    #   2. Invalidacion de cache: al hacer el COPY ... antes del yarn install, cada cambio en el codigo invalida el cache de las dependencias. Entonces conviene primero copiar solo los archivos de las dependencias y luego del resto del codigo
-    # Con estas mejoras ahora la imagen pesa 156MB.
-    # Tambien podriamos utilizar multi-stage build para separar dependiendo el ambiente en el que estemos trabajando
+        #   Puntos a mejorar:
+        #   1. Imagen utilizada: en vez de utilizar como imagen base alpine y luego instalar node, mejor seria utilizar la (imagen oficial de node)[https://hub.docker.com/_/node]
+        #   2. Invalidacion de cache: al hacer el COPY ... antes del yarn install, cada cambio en el codigo invalida el cache de las dependencias. Entonces conviene primero copiar solo los archivos de las dependencias y luego del resto del codigo
+        # Con estas mejoras ahora la imagen pesa 156MB.
+        # Tambien podriamos utilizar multi-stage build para separar dependiendo el ambiente en el que estemos trabajando
     ```
 
 
@@ -133,22 +133,23 @@ Una vez creada la imágen, debería ser capaz de correr la aplicación.
 
 - **1.4)** Ejecute un comando para poder correr la aplicación.
     ```bash
-    docker run --name list-container -p 8080:3000 --rm list-manager:v1
+        docker run --name list-container -p 8080:3000 --rm list-manager:v1
     ```
 - **1.5)** Explique el comando de la respuesta anterior y cada parámetro enviado.
     ```bash
-    #   run: para levantar un contenedor nuevo
-    #   --name: para asignarle un nombre especifico al contenedor
-    #   -p 8080:3000: para exponer el puerto 3000 del contenedor al puerto 8080 del host
-    #   --rm: para borrar el contenedor al finalizarlo
-    #   list-manager:v1: nombre de la imagen buildeada con su version
+        #   run: para levantar un contenedor nuevo
+        #   --name: para asignarle un nombre especifico al contenedor
+        #   -p 8080:3000: para exponer el puerto 3000 del contenedor al puerto 8080 del host
+        #   --rm: para borrar el contenedor al finalizarlo
+        #   list-manager:v1: nombre de la imagen buildeada con su version
     ```
 - **1.6)** ¿Cómo puede saber si el contenedor está corriendo?
     ```bash
     docker ps
     ```
 - **1.7)** Adjunte una captura de pantalla con la aplicación funcionando con la URL utilizada para acceder. Reemplace la imágen siguiente por su captura de pantalla.
-    ![](./imgs/broken_img.png)
+  <img width="1915" height="1014" alt="Screenshot From 2025-11-07 13-34-26" src="https://github.com/user-attachments/assets/d8fe0d0a-04b0-43af-a79c-141c271f0ecb" />
+
 
 
 ## Parte 2 - Actualizar aplicación
@@ -168,6 +169,9 @@ En esta parte 2, haremos algunos cambios y actualizaremos la aplicación.
 
 - **2.1)** Modifique el código fuente como se indicó anteriormente.
 - **2.2)** Ejecute los comando necesarios para que la aplicación tome los cambios. Realice un etiquetado (tag) coherente respecto a los cambios en la imágen.
+  ```bash
+      docker build -t list-manager:v2 ./app
+  ```
 
 
 ### 2. Elimine el contenedor e imágen anterior
@@ -178,11 +182,13 @@ La actualización del código recientemente realizada deja obsoleta la antigua v
 
 - **2.2)** Elimine la imágen y el contenedor hecho en el punto anterior: Mostrar comandos utilizados.
     ```bash
-    # Escriba acá el comando utilizado
+        # Como puse --rm no hace borrar explicitamente el contenedor
+        # Para borrar la imagen
+        docker image rm list-manager:v1
     ```
 - **2.3)** ¿Como puede listar las imágenes para comprobar que se ha eliminado la imagen del punto anterior?
     ```bash
-    # Escriba acá el comando utilizado
+    docker images
     ```
 
 
@@ -197,6 +203,12 @@ Para compartir la imágen de la aplicación usaremos la registry de [DockerHub](
 **ENTREGABLE**
 
 - **3.1)** Comparta la URL de DockerHub para que pueda ser posible probar y descargar su imágen.
+      ```bash
+          docker login
+          docker tag list-manager:v2 catalinagaitan/list-manager:v2
+          docker push catalinagaitan/list-manager:v2
+  
+      ```
 
     [Inserte la URL de la imágen](https://dockerhub.com/)
 
