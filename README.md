@@ -103,15 +103,22 @@ Antes de poder correr la aplicación, necesitamos obtener el código fuente y de
 
 - **1.1)** Ejecute el comando correspondiente para buildear la imagen. Elija un nombre de imagen y un tag acorde. 
     ```bash
-    # Escriba acá el comando utilizado
+    # Desde la raiz del proyecto
+    docker build -t list-manager:v1 ./app
     ```
 - **1.2)** ¿Qué espacio ocupa la imagen una vez creada?
     ```bash
-    # Espacio utilizado
+    # Comando para saber espacio
+    docker images
+    # Espacio ocupado: 177M
     ```
 - **1.3)** ¿Puede hacer algo para optimizar o mejorar la imagen?. Describa qué modificaciones puede hacer para optimizar la imagen.
     ```bash
-    # Describa que podría hacer para mejorar u optimizar la creación de la imágen.
+    #   Puntos a mejorar:
+    #   1. Imagen utilizada: en vez de utilizar como imagen base alpine y luego instalar node, mejor seria utilizar la (imagen oficial de node)[https://hub.docker.com/_/node]
+    #   2. Invalidacion de cache: al hacer el COPY ... antes del yarn install, cada cambio en el codigo invalida el cache de las dependencias. Entonces conviene primero copiar solo los archivos de las dependencias y luego del resto del codigo
+    # Con estas mejoras ahora la imagen pesa 156MB.
+    # Tambien podriamos utilizar multi-stage build para separar dependiendo el ambiente en el que estemos trabajando
     ```
 
 
@@ -126,15 +133,19 @@ Una vez creada la imágen, debería ser capaz de correr la aplicación.
 
 - **1.4)** Ejecute un comando para poder correr la aplicación.
     ```bash
-    # Escriba acá el comando
+    docker run --name list-container -p 8080:3000 --rm list-manager:v1
     ```
 - **1.5)** Explique el comando de la respuesta anterior y cada parámetro enviado.
     ```bash
-    # Escriba la explicación
+    #   run: para levantar un contenedor nuevo
+    #   --name: para asignarle un nombre especifico al contenedor
+    #   -p 8080:3000: para exponer el puerto 3000 del contenedor al puerto 8080 del host
+    #   --rm: para borrar el contenedor al finalizarlo
+    #   list-manager:v1: nombre de la imagen buildeada con su version
     ```
 - **1.6)** ¿Cómo puede saber si el contenedor está corriendo?
     ```bash
-    # Escriba acá el comando
+    docker ps
     ```
 - **1.7)** Adjunte una captura de pantalla con la aplicación funcionando con la URL utilizada para acceder. Reemplace la imágen siguiente por su captura de pantalla.
     ![](./imgs/broken_img.png)
