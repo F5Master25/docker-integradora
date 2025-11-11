@@ -1,0 +1,32 @@
+services:
+    mysql_db:
+        image: mysql:8.0
+        container_name: mysql_db
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+        volumes:
+            - mysql_volume:/var/lib/mysql
+        networks:
+            - list_network
+
+    list_app:
+        image: catalinagaitan/list-manager:v2
+        container_name: list_app
+        ports:
+            - "${APP_PORT}:3000"
+        environment:
+            MYSQL_HOST: ${MYSQL_HOST}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_DB: ${MYSQL_DB}
+        depends_on:
+            - mysql_db
+        networks:
+            - list_network
+
+volumes:
+    mysql_volume:
+
+networks:
+    list_network:

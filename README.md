@@ -207,10 +207,11 @@ Para compartir la imágen de la aplicación usaremos la registry de [DockerHub](
           docker login
           docker tag list-manager:v2 catalinagaitan/list-manager:v2
           docker push catalinagaitan/list-manager:v2
-  
+          # Para usarlo
+          docker pull catalinagaitan/list-manager:v2
       ```
 
-    [Inserte la URL de la imágen](https://dockerhub.com/)
+    [Inserte la URL de la imágen](https://hub.docker.com/repository/docker/catalinagaitan/list-manager/general)
 
 > [!IMPORTANT]
 > Agregue un _overview_ para el repositorio de Dockerhub con instrucciones para correr la imágen y todo lo que considere necesario para que un tercero pueda ejecutar la imágen.
@@ -229,7 +230,8 @@ Los datos en esta APP se guardan en un archivo `/etc/todos/todo.db`.
 
 - **4.1)** Escriba los comandos necesarios para persistir la base de datos. Decida que tipo de persistencia es la adecuada para su app ([Bind mounts](https://docker.idepba.com.ar/clase5.html#/bind_mounts) o [volumes](https://docker.idepba.com.ar/clase5.html#/volumes))
     ```bash
-    # Escriba el comando necesario
+        docker volume create list_volume
+        docker run --rm -it -v list_volume:/etc/todos -p 8080:3000 list-manager:v2
     ```
 
 
@@ -273,19 +275,19 @@ En la aplicación también es posible setear variables de entorno para parametri
 
 - **5.1)** [Crear una red](https://docker.idepba.com.ar/clase4.html#/network_create) para conexión entre los contenedores que servirá también para conectar a la aplicación.
     ```bash
-    # Escriba acá el comando utilizado
+        docker network create --driver bridge list_network
     ```
 - **5.2)** [Crear un nuevo volumen](https://docker.idepba.com.ar/clase5.html#/volume_create) para persistir los datos de la base MySQL. El path donde se almacenan los datos en el contenedor MySQL es `/var/lib/mysql`.
     ```bash
-    # Escriba acá el comando utilizado
+        docker volume create mysql_volume
     ```
 - **5.3)** Iniciar el _contenedor de base de datos_ utilizando el comando `docker run` y enviando las variables de entorno necesarias.
     ```bash
-    # Escriba acá el comando utilizado
+        docker run -d --name mysql_db --network list_network -v mysql_volume:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=pass123 -e MYSQL_DATABASE=todos mysql:8.0
     ```
 - **5.4)** Iniciar el _contenedor de la aplicación_ utilizando el comando `docker run` enviando las variables de entornos necesarias para la conexión con la base de datos.
     ```bash
-    # Escriba acá el comando utilizado
+        docker run -d --name list_app --network list_network -p 8080:3000 -e MYSQL_HOST=mysql_db -e MYSQL_USER=root -e MYSQL_PASSWORD=pass123 -e MYSQL_DB=todos list-manager:v2
     ```
 
 > [!TIP]
